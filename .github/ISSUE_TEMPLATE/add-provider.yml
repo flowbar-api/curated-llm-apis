@@ -1,0 +1,40 @@
+name: Add New Provider
+description: Suggest a new LLM API provider or tool
+title: "[Add]: "
+labels: ["new-entry"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Provider/Tool Name
+      placeholder: e.g., Acme AI
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Website URL
+      placeholder: https://example.com
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Major Providers
+        - Open Source Model Hosting
+        - Specialized APIs
+        - Embedding APIs
+        - API Gateways & Routers
+        - LLM SDKs & Libraries
+        - Evaluation & Testing
+        - Rate Limiting & Cost Management
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true

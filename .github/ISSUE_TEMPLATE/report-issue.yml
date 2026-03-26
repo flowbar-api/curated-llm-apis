@@ -1,0 +1,29 @@
+name: Report an Issue
+description: Report broken link, outdated info, or incorrect data
+title: "[Fix]: "
+labels: ["fix"]
+body:
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: Issue Type
+      options:
+        - Broken Link
+        - Outdated Pricing
+        - Incorrect Information
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: entry
+    attributes:
+      label: Affected Entry
+      placeholder: e.g., OpenAI GPT-4o
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+    validations:
+      required: true
