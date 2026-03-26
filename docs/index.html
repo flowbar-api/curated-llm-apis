@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curated LLM APIs - Searchable Directory</title>
+  <meta name="description" content="A curated comparison of LLM API providers with pricing, models, features, and SDKs. Search and filter 80+ tools.">
+  <style>
+    :root {
+      --bg: #0f0c29;
+      --bg2: #1a1640;
+      --bg3: #242052;
+      --card: #1e1a45;
+      --card-hover: #2a2560;
+      --border: #332e6e;
+      --text: #e0e0f0;
+      --text2: #a0a0c0;
+      --accent1: #00d2ff;
+      --accent2: #7b2ff7;
+      --featured: #ff6b35;
+      --green: #00e676;
+      --tag-bg: rgba(0,210,255,0.12);
+      --tag-text: #00d2ff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 50%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .hero p { color: var(--text2); font-size: 1.15rem; max-width: 600px; margin: 0 auto 20px; }
+    .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .badges img { height: 22px; }
+    .featured-banner {
+      max-width: 900px;
+      margin: 0 auto 0;
+      background: linear-gradient(135deg, rgba(255,107,53,0.12), rgba(123,47,247,0.12));
+      border: 1px solid rgba(255,107,53,0.3);
+      border-radius: 12px;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      text-align: left;
+    }
+    .featured-banner .badge { background: var(--featured); color: #fff; padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+    .featured-banner .info { flex: 1; }
+    .featured-banner .info h3 { font-size: 1.1rem; margin-bottom: 4px; }
+    .featured-banner .info h3 a { color: var(--text); text-decoration: none; }
+    .featured-banner .info h3 a:hover { color: var(--accent1); }
+    .featured-banner .info p { color: var(--text2); font-size: 0.9rem; margin: 0; }
+    .featured-banner .links { display: flex; gap: 10px; flex-shrink: 0; }
+    .featured-banner .links a {
+      padding: 6px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      text-decoration: none; white-space: nowrap; transition: all 0.2s;
+    }
+    .featured-banner .links a.primary { background: var(--featured); color: #fff; }
+    .featured-banner .links a.primary:hover { filter: brightness(1.15); }
+    .featured-banner .links a.secondary { border: 1px solid var(--border); color: var(--text2); }
+    .featured-banner .links a.secondary:hover { border-color: var(--accent1); color: var(--accent1); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+    .controls {
+      display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .search-box {
+      flex: 1; min-width: 280px; position: relative;
+    }
+    .search-box input {
+      width: 100%; padding: 12px 16px 12px 44px; background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 1rem; outline: none; transition: border-color 0.2s;
+    }
+    .search-box input:focus { border-color: var(--accent1); }
+    .search-box input::placeholder { color: var(--text2); }
+    .search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); }
+    .filter-select {
+      padding: 12px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-size: 0.95rem; outline: none; cursor: pointer; min-width: 200px;
+    }
+    .filter-select:focus { border-color: var(--accent1); }
+    .stats { display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px;
+      flex: 1; min-width: 140px; text-align: center;
+    }
+    .stat .num { font-size: 1.8rem; font-weight: 800; color: var(--accent1); }
+    .stat .label { font-size: 0.8rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+      transition: all 0.2s; cursor: default;
+    }
+    .card:hover { background: var(--card-hover); border-color: var(--accent2); transform: translateY(-2px); }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .card h3 { font-size: 1rem; font-weight: 700; }
+    .card h3 a { color: var(--text); text-decoration: none; }
+    .card h3 a:hover { color: var(--accent1); }
+    .card .category-tag {
+      font-size: 0.7rem; padding: 2px 8px; border-radius: 6px; background: var(--tag-bg);
+      color: var(--tag-text); white-space: nowrap; font-weight: 600;
+    }
+    .card p { color: var(--text2); font-size: 0.88rem; line-height: 1.5; margin-bottom: 12px; }
+    .card .pricing { font-size: 0.82rem; color: var(--green); font-weight: 600; }
+    .no-results { text-align: center; padding: 60px 20px; color: var(--text2); }
+    .no-results h3 { font-size: 1.3rem; margin-bottom: 8px; color: var(--text); }
+    .submit-section {
+      margin-top: 40px; text-align: center; padding: 40px 20px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
+    }
+    .submit-section h2 { font-size: 1.5rem; margin-bottom: 8px; }
+    .submit-section p { color: var(--text2); margin-bottom: 20px; }
+    .submit-btn {
+      display: inline-block; padding: 12px 32px; background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: #fff; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 1rem;
+      transition: all 0.2s; border: none; cursor: pointer;
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(123,47,247,0.3); }
+    footer {
+      text-align: center; padding: 30px 20px; color: var(--text2); font-size: 0.85rem;
+      border-top: 1px solid var(--border); margin-top: 40px;
+    }
+    footer a { color: var(--accent1); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 2rem; }
+      .featured-banner { flex-direction: column; text-align: center; }
+      .featured-banner .links { justify-content: center; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>Curated LLM APIs</h1>
+    <p>A comprehensive directory of LLM API providers &mdash; search, filter, and compare pricing, models, and features.</p>
+    <div class="badges">
+      <img src="https://awesome.re/badge-flat2.svg" alt="Awesome">
+      <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
+      <img src="https://img.shields.io/badge/providers-80%2B-brightgreen" alt="80+ Providers">
+      <img src="https://img.shields.io/badge/updated-Mar_2026-orange" alt="Updated March 2026">
+    </div>
+    <div class="featured-banner">
+      <span class="badge">Featured</span>
+      <div class="info">
+        <h3><a href="https://www.ssemble.com" target="_blank">Ssemble AI Clipping</a></h3>
+        <p>AI-powered video clipping via MCP. Extract the best short-form clips from long videos automatically.</p>
+      </div>
+      <div class="links">
+        <a href="https://www.npmjs.com/package/@ssemble/mcp-server" target="_blank" class="primary">npm Package</a>
+        <a href="https://www.ssemble.com" target="_blank" class="secondary">Website</a>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="controls">
+      <div class="search-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="search" placeholder="Search providers, models, features..." autofocus>
+      </div>
+      <select class="filter-select" id="categoryFilter">
+        <option value="all">All Categories</option>
+        <option value="Major Providers">Major Providers</option>
+        <option value="Open Source Hosting">Open Source Hosting</option>
+        <option value="Voice & Audio">Voice & Audio</option>
+        <option value="Image & Video">Image & Video</option>
+        <option value="Code">Code</option>
+        <option value="Embeddings">Embeddings</option>
+        <option value="API Gateways">API Gateways</option>
+        <option value="SDKs & Libraries">SDKs & Libraries</option>
+        <option value="Evaluation">Evaluation</option>
+        <option value="Cost Management">Cost Management</option>
+      </select>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="totalCount">0</div><div class="label">Total Tools</div></div>
+      <div class="stat"><div class="num" id="filteredCount">0</div><div class="label">Showing</div></div>
+      <div class="stat"><div class="num">11</div><div class="label">Categories</div></div>
+      <div class="stat"><div class="num">Mar 2026</div><div class="label">Last Updated</div></div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="no-results" id="noResults" style="display:none">
+      <h3>No results found</h3>
+      <p>Try a different search term or category filter.</p>
+    </div>
+    <div class="submit-section">
+      <h2>Know a tool that should be listed?</h2>
+      <p>Help us keep this directory comprehensive and up to date.</p>
+      <a href="https://github.com/awesome-ai-tools/curated-llm-apis/issues/new?template=add-provider.yml" target="_blank" class="submit-btn">Submit a Provider</a>
+    </div>
+  </div>
+  <footer>
+    <p>
+      <a href="https://github.com/awesome-ai-tools/curated-llm-apis">GitHub Repository</a> &bull;
+      <a href="https://github.com/awesome-ai-tools/curated-llm-apis/blob/main/CONTRIBUTING.md">Contributing</a> &bull;
+      <a href="https://github.com/awesome-ai-tools/curated-llm-apis/blob/main/LICENSE">MIT License</a>
+    </p>
+    <p style="margin-top:8px">Maintained by <a href="https://github.com/awesome-ai-tools">awesome-ai-tools</a></p>
+  </footer>
+  <script>
+const providers = [
+  {name:"OpenAI",url:"https://platform.openai.com/",cat:"Major Providers",desc:"Creator of GPT-4o, GPT-4.1. 128K-1M context. Industry-leading function calling.",price:"$2.50/$10.00 (GPT-4o)"},
+  {name:"Anthropic",url:"https://www.anthropic.com/api",cat:"Major Providers",desc:"Claude Haiku 3.5, Sonnet 4, Opus 4. Up to 200K context. Strong at coding and safety.",price:"$3/$15 (Sonnet 4)"},
+  {name:"Google Gemini",url:"https://ai.google.dev/",cat:"Major Providers",desc:"Gemini 2.5 Pro, 2.0 Flash. Native multimodal (text, image, audio, video). Up to 1M context.",price:"$1.25/$10 (2.5 Pro)"},
+  {name:"Amazon Bedrock",url:"https://aws.amazon.com/bedrock/",cat:"Major Providers",desc:"Managed access to Anthropic, Meta, Mistral, Cohere, AI21 and Titan models via unified API.",price:"Pay-per-use"},
+  {name:"Azure OpenAI",url:"https://azure.microsoft.com/en-us/products/ai-services/openai-service",cat:"Major Providers",desc:"Enterprise deployment of OpenAI models with Azure security and compliance.",price:"Same as OpenAI"},
+  {name:"Cohere",url:"https://cohere.com/",cat:"Major Providers",desc:"Enterprise NLP. Command R+ for RAG, Command A for agents. Strong multilingual support.",price:"$2.50/$10 (Command A)"},
+  {name:"AI21 Labs",url:"https://www.ai21.com/",cat:"Major Providers",desc:"Jamba model family with 256K context. Enterprise language understanding and generation.",price:"Contact for pricing"},
+  {name:"Mistral AI",url:"https://mistral.ai/",cat:"Major Providers",desc:"Mistral Large, Medium 3, Small. Open-weight models. Strong multilingual performance.",price:"$2/$6 (Large)"},
+  {name:"xAI (Grok)",url:"https://docs.x.ai/",cat:"Major Providers",desc:"Grok-3 models with real-time X data access. Up to 131K context window.",price:"$3/$15 (Grok-3)"},
+  {name:"DeepSeek",url:"https://platform.deepseek.com/",cat:"Major Providers",desc:"Highly cost-effective DeepSeek V3. Auto context caching saves up to 90%. Open-weight.",price:"$0.27/$1.10 (V3)"},
+  {name:"Meta Llama",url:"https://llama.meta.com/",cat:"Major Providers",desc:"Open-source Llama 3.1 (8B, 70B, 405B). Free weights with commercial license.",price:"Free (self-host)"},
+  {name:"Reka AI",url:"https://www.reka.ai/",cat:"Major Providers",desc:"Multimodal models with vision, audio, and text. Core, Flash, and Edge variants.",price:"Contact for pricing"},
+  {name:"Together AI",url:"https://www.together.ai/",cat:"Open Source Hosting",desc:"100+ open-source models. Inference, fine-tuning, and custom deployment.",price:"$0.88/1M (Llama 70B)"},
+  {name:"Fireworks AI",url:"https://fireworks.ai/",cat:"Open Source Hosting",desc:"High-performance inference for open models. On-demand and serverless deployment.",price:"$0.90/1M (Llama 70B)"},
+  {name:"Groq",url:"https://groq.com/",cat:"Open Source Hosting",desc:"Ultra-fast LPU inference. Sub-second latency. 500+ tokens/sec throughput.",price:"$0.59/$0.79 (Llama 70B)"},
+  {name:"Anyscale",url:"https://www.anyscale.com/",cat:"Open Source Hosting",desc:"Scalable LLM serving on Ray. Fine-tuning and hosting with auto-scaling.",price:"Contact for pricing"},
+  {name:"Replicate",url:"https://replicate.com/",cat:"Open Source Hosting",desc:"Run open-source models via simple API. Pay per second. Thousands of models.",price:"Per-second compute"},
+  {name:"Modal",url:"https://modal.com/",cat:"Open Source Hosting",desc:"Serverless cloud for AI/ML. Any model with GPU access. Pay-per-second.",price:"Per-second billing"},
+  {name:"Perplexity API",url:"https://docs.perplexity.ai/",cat:"Open Source Hosting",desc:"LLM API with built-in web search grounding. Sonar models with real-time data.",price:"Contact for pricing"},
+  {name:"DeepInfra",url:"https://deepinfra.com/",cat:"Open Source Hosting",desc:"Cost-effective inference. Llama 3.1 8B at $0.03/$0.05. Global edge deployment.",price:"$0.03/$0.05 (Llama 8B)"},
+  {name:"Cerebras",url:"https://cerebras.ai/",cat:"Open Source Hosting",desc:"Wafer-scale inference. Record-setting throughput for Llama models.",price:"$0.10/1M (Llama 8B)"},
+  {name:"Lepton AI",url:"https://www.lepton.ai/",cat:"Open Source Hosting",desc:"Developer-friendly open-source model platform. Auto-scaling and monitoring.",price:"Contact for pricing"},
+  {name:"Hyperbolic",url:"https://hyperbolic.xyz/",cat:"Open Source Hosting",desc:"Decentralized AI inference. Global GPU network for open-source models.",price:"Competitive rates"},
+  {name:"OpenRouter",url:"https://openrouter.ai/",cat:"API Gateways",desc:"Unified API for 100+ models. Single API key, automatic failover, competitive pricing.",price:"Pass-through + margin"},
+  {name:"Novita AI",url:"https://novita.ai/",cat:"Open Source Hosting",desc:"Affordable GPU cloud. Image generation, LLM hosting, and fine-tuning.",price:"Contact for pricing"},
+  {name:"OctoAI",url:"https://octo.ai/",cat:"Open Source Hosting",desc:"Efficient AI inference with optimized serving. Self-serve fine-tuning.",price:"Contact for pricing"},
+  {name:"ElevenLabs",url:"https://elevenlabs.io/",cat:"Voice & Audio",desc:"Industry-leading AI voice synthesis and cloning. TTS, voice cloning, dubbing.",price:"Per-character pricing"},
+  {name:"OpenAI Whisper API",url:"https://platform.openai.com/docs/guides/speech-to-text",cat:"Voice & Audio",desc:"State-of-the-art speech-to-text. 50+ languages supported.",price:"$0.006/minute"},
+  {name:"AssemblyAI",url:"https://www.assemblyai.com/",cat:"Voice & Audio",desc:"Speech-to-text with diarization, sentiment analysis, and summarization.",price:"Per-minute pricing"},
+  {name:"Deepgram",url:"https://deepgram.com/",cat:"Voice & Audio",desc:"Fast, accurate speech recognition. Real-time streaming and batch processing.",price:"Per-minute pricing"},
+  {name:"Suno",url:"https://suno.com/",cat:"Voice & Audio",desc:"AI music generation. Full songs with vocals, instruments, and lyrics from text.",price:"Credit-based"},
+  {name:"Stability AI",url:"https://platform.stability.ai/",cat:"Image & Video",desc:"Stable Diffusion creators. Image generation, upscaling, editing, video APIs.",price:"Per-image pricing"},
+  {name:"Midjourney",url:"https://www.midjourney.com/",cat:"Image & Video",desc:"Premium AI image generation known for artistic quality.",price:"Subscription plans"},
+  {name:"RunwayML",url:"https://runwayml.com/",cat:"Image & Video",desc:"AI video generation and editing. Gen-3 Alpha text-to-video for film production.",price:"Credit-based"},
+  {name:"Luma AI",url:"https://lumalabs.ai/",cat:"Image & Video",desc:"Dream Machine for text-to-video. Realistic 3D-aware video synthesis.",price:"Credit-based"},
+  {name:"Ideogram",url:"https://ideogram.ai/",cat:"Image & Video",desc:"AI image generation with strong text rendering. Free tier available.",price:"Free tier + paid"},
+  {name:"Kling AI",url:"https://klingai.com/",cat:"Image & Video",desc:"Video generation by Kuaishou. Text-to-video and image-to-video with motion control.",price:"Credit-based"},
+  {name:"Pika",url:"https://pika.art/",cat:"Image & Video",desc:"AI video generation and editing. Text/image/video-to-video capabilities.",price:"Credit-based"},
+  {name:"GitHub Copilot",url:"https://github.com/features/copilot",cat:"Code",desc:"AI pair programmer by OpenAI. Code completion, chat, CLI for 10+ languages.",price:"$10-39/month"},
+  {name:"Codestral (Mistral)",url:"https://mistral.ai/",cat:"Code",desc:"Mistral dedicated code model. 32K context optimized for code.",price:"$0.30/$0.90 per 1M"},
+  {name:"Sourcegraph Cody",url:"https://sourcegraph.com/cody",cat:"Code",desc:"AI coding assistant with full codebase context. Multiple LLM backends.",price:"Free + Enterprise"},
+  {name:"OpenAI Embeddings",url:"https://platform.openai.com/docs/guides/embeddings",cat:"Embeddings",desc:"text-embedding-3-large/small. 3072/1536 dimensions. Industry standard.",price:"$0.13/$0.02 per 1M"},
+  {name:"Cohere Embed",url:"https://cohere.com/embed",cat:"Embeddings",desc:"Embed v3. 100+ languages. Optimized for search, classification, clustering.",price:"Contact for pricing"},
+  {name:"Voyage AI",url:"https://www.voyageai.com/",cat:"Embeddings",desc:"High-performance retrieval embeddings. Leading MTEB benchmark scores.",price:"Contact for pricing"},
+  {name:"Jina AI",url:"https://jina.ai/",cat:"Embeddings",desc:"jina-embeddings-v3. 8192 context. 89 languages. Open-source options.",price:"$0.02 per 1M tokens"},
+  {name:"Google Vertex Embeddings",url:"https://cloud.google.com/vertex-ai/docs/generative-ai/embeddings/get-text-embeddings",cat:"Embeddings",desc:"text-embedding-005. 768 dimensions with task-type optimization.",price:"Google Cloud pricing"},
+  {name:"Mixedbread AI",url:"https://www.mixedbread.ai/",cat:"Embeddings",desc:"High-quality embeddings with binary quantization. Competitive with OpenAI.",price:"Contact for pricing"},
+  {name:"Nomic AI",url:"https://www.nomic.ai/",cat:"Embeddings",desc:"Open-source nomic-embed-text. 8192 context. Published training data.",price:"Free for research"},
+  {name:"LiteLLM",url:"https://github.com/BerriAI/litellm",cat:"API Gateways",desc:"Open-source proxy for 100+ LLMs. Unified OpenAI-compatible API. Load balancing.",price:"Free (open-source)"},
+  {name:"Portkey",url:"https://portkey.ai/",cat:"API Gateways",desc:"AI gateway with semantic caching, retries, load balancing. 200+ models. SOC2.",price:"Free tier + paid"},
+  {name:"Helicone",url:"https://www.helicone.ai/",cat:"API Gateways",desc:"Open-source LLM observability. Logging, caching, rate limiting, cost tracking.",price:"Free tier + paid"},
+  {name:"Martian",url:"https://withmartian.com/",cat:"API Gateways",desc:"Intelligent model router. Auto-selects best LLM by cost, quality, latency.",price:"Contact for pricing"},
+  {name:"Unify AI",url:"https://unify.ai/",cat:"API Gateways",desc:"LLM routing platform. Benchmarks and routes to optimal provider.",price:"Contact for pricing"},
+  {name:"Not Diamond",url:"https://www.notdiamond.ai/",cat:"API Gateways",desc:"AI model router that learns best model per use case. Quality-based routing.",price:"Contact for pricing"},
+  {name:"Keywords AI",url:"https://keywordsai.co/",cat:"API Gateways",desc:"LLM monitoring gateway. Analytics, prompt management, A/B testing.",price:"Free tier + paid"},
+  {name:"LangChain",url:"https://www.langchain.com/",cat:"SDKs & Libraries",desc:"Popular LLM framework. Chains, agents, RAG, memory. Python and JS. 70+ providers.",price:"Free (open-source)"},
+  {name:"LlamaIndex",url:"https://www.llamaindex.ai/",cat:"SDKs & Libraries",desc:"Data framework for RAG. Advanced indexing and retrieval strategies.",price:"Free (open-source)"},
+  {name:"Vercel AI SDK",url:"https://sdk.vercel.ai/",cat:"SDKs & Libraries",desc:"TypeScript toolkit for AI web apps. Streaming UI, unified provider API, React hooks.",price:"Free (open-source)"},
+  {name:"Anthropic SDK",url:"https://github.com/anthropics/anthropic-sdk-python",cat:"SDKs & Libraries",desc:"Official Python and TypeScript SDKs for Claude. Streaming, tools, vision.",price:"Free (open-source)"},
+  {name:"OpenAI SDK",url:"https://github.com/openai/openai-python",cat:"SDKs & Libraries",desc:"Official Python and Node.js libraries. Streaming, function calling, assistants.",price:"Free (open-source)"},
+  {name:"Instructor",url:"https://github.com/jxnl/instructor",cat:"SDKs & Libraries",desc:"Structured output from LLMs via Pydantic. Works with all major providers.",price:"Free (open-source)"},
+  {name:"Haystack",url:"https://haystack.deepset.ai/",cat:"SDKs & Libraries",desc:"End-to-end NLP framework. Modular pipelines for RAG and document search.",price:"Free (open-source)"},
+  {name:"Semantic Kernel",url:"https://github.com/microsoft/semantic-kernel",cat:"SDKs & Libraries",desc:"Microsoft SDK for LLM apps. C#, Python, Java. AI plugins and planners.",price:"Free (open-source)"},
+  {name:"DSPy",url:"https://dspy-docs.vercel.app/",cat:"SDKs & Libraries",desc:"Programming (not prompting) LMs. Auto prompt optimization and compilation.",price:"Free (open-source)"},
+  {name:"Pydantic AI",url:"https://ai.pydantic.dev/",cat:"SDKs & Libraries",desc:"Type-safe agent framework from Pydantic team. Model-agnostic, structured outputs.",price:"Free (open-source)"},
+  {name:"CrewAI",url:"https://www.crewai.com/",cat:"SDKs & Libraries",desc:"Orchestrate role-playing AI agents. Multi-agent collaboration for complex tasks.",price:"Free (open-source)"},
+  {name:"AutoGen",url:"https://microsoft.github.io/autogen/",cat:"SDKs & Libraries",desc:"Microsoft multi-agent conversational AI. Agent-to-agent communication.",price:"Free (open-source)"},
+  {name:"Braintrust",url:"https://www.braintrust.dev/",cat:"Evaluation",desc:"LLM evaluation, logging, prompt playground. Side-by-side comparison and scoring.",price:"Free tier + paid"},
+  {name:"Promptfoo",url:"https://www.promptfoo.dev/",cat:"Evaluation",desc:"Open-source LLM testing. Red-teaming, model comparison, CI/CD integration.",price:"Free (open-source)"},
+  {name:"Humanloop",url:"https://humanloop.com/",cat:"Evaluation",desc:"Prompt management and evaluation. Version control, A/B testing, human feedback.",price:"Free tier + paid"},
+  {name:"LangSmith",url:"https://smith.langchain.com/",cat:"Evaluation",desc:"By LangChain. Debug, test, evaluate, monitor LLM apps. Trace visualization.",price:"Free tier + paid"},
+  {name:"Weights & Biases",url:"https://wandb.ai/",cat:"Evaluation",desc:"ML experiment tracking with LLM features. Prompt versioning and trace logging.",price:"Free tier + paid"},
+  {name:"Arize AI",url:"https://arize.com/",cat:"Evaluation",desc:"ML observability with LLM monitoring. Embedding drift and prompt analysis.",price:"Free tier + paid"},
+  {name:"Confident AI",url:"https://www.confident-ai.com/",cat:"Evaluation",desc:"Open-source DeepEval framework. 14+ metrics: hallucination, relevancy, toxicity.",price:"Free (open-source)"},
+  {name:"Helicone (Cost)",url:"https://www.helicone.ai/",cat:"Cost Management",desc:"Open-source cost tracking, rate limiting, and caching for all major providers.",price:"Free tier + paid"},
+  {name:"LLMeter",url:"https://github.com/awslabs/llmeter",cat:"Cost Management",desc:"AWS open-source benchmarking. Measure latency, throughput, cost efficiency.",price:"Free (open-source)"},
+  {name:"Portkey (Cost)",url:"https://portkey.ai/",cat:"Cost Management",desc:"Cost tracking, budget alerts, rate limiting. Semantic caching to reduce calls.",price:"Free tier + paid"},
+  {name:"OpenMeter",url:"https://openmeter.io/",cat:"Cost Management",desc:"Usage metering and billing for AI apps. Track tokens, set budgets, invoices.",price:"Free tier + paid"},
+  {name:"LangFuse",url:"https://langfuse.com/",cat:"Cost Management",desc:"Open-source LLM engineering. Cost tracking, prompt management, quality eval.",price:"Free (open-source)"},
+  {name:"Lago",url:"https://www.getlago.com/",cat:"Cost Management",desc:"Open-source usage-based billing. Track AI consumption, build product metering.",price:"Free (open-source)"},
+];
+
+const grid = document.getElementById('grid');
+const search = document.getElementById('search');
+const categoryFilter = document.getElementById('categoryFilter');
+const totalCount = document.getElementById('totalCount');
+const filteredCount = document.getElementById('filteredCount');
+const noResults = document.getElementById('noResults');
+
+totalCount.textContent = providers.length;
+
+function render() {
+  const q = search.value.toLowerCase();
+  const cat = categoryFilter.value;
+  const filtered = providers.filter(p => {
+    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q);
+    const matchesCat = cat === 'all' || p.cat === cat;
+    return matchesSearch && matchesCat;
+  });
+  filteredCount.textContent = filtered.length;
+  noResults.style.display = filtered.length === 0 ? 'block' : 'none';
+  grid.innerHTML = filtered.map(p => `
+    <div class="card">
+      <div class="card-header">
+        <h3><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a></h3>
+        <span class="category-tag">${p.cat}</span>
+      </div>
+      <p>${p.desc}</p>
+      ${p.price ? `<div class="pricing">${p.price}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+search.addEventListener('input', render);
+categoryFilter.addEventListener('change', render);
+render();
+  </script>
+</body>
+</html>
